@@ -272,7 +272,7 @@ const displayBreeds = async (breeds: BreedInfo[]): Promise<void> => {
  * Filtra las razas por tamaño
  * @param size - Tamaño a filtrar
  */
-const filterBySize = (size: DogSize): void => {
+const filterBySize = async (size: DogSize): Promise<void> => {
   // Actualizar clases activas en botones
   filterButtons.forEach(btn => {
     if (btn.dataset.size === size) {
@@ -287,7 +287,7 @@ const filterBySize = (size: DogSize): void => {
     ? allBreeds 
     : allBreeds.filter(breed => breed.size === size);
     
-  displayBreeds(filteredBreeds);
+  await displayBreeds(filteredBreeds);
 };
 
 /**
