@@ -6,6 +6,9 @@
 // Importamos los estilos
 import './style.css';
 
+// Importamos la base de datos de razas
+import { getBreedDetails, type BreedDetails } from './breedData';
+
 // ## Tipos e Interfaces TypeScript
 // Definimos la estructura de datos que esperamos de la API
 
@@ -166,11 +169,23 @@ const getSizeLabel = (size: DogSize): string => {
 const galleryDiv = document.getElementById('gallery') as HTMLDivElement;
 const filterButtons = document.querySelectorAll('.filter-btn') as NodeListOf<HTMLButtonElement>;
 
+// Referencias del modal
+const modal = document.getElementById('breedModal') as HTMLDivElement;
+const modalClose = document.querySelector('.modal-close') as HTMLSpanElement;
+const modalImage = document.getElementById('modalImage') as HTMLImageElement;
+const modalTitle = document.getElementById('modalTitle') as HTMLHeadingElement;
+const modalSize = document.getElementById('modalSize') as HTMLParagraphElement;
+const modalOrigin = document.getElementById('modalOrigin') as HTMLParagraphElement;
+const modalLifespan = document.getElementById('modalLifespan') as HTMLParagraphElement;
+const modalTemperament = document.getElementById('modalTemperament') as HTMLParagraphElement;
+const modalDescription = document.getElementById('modalDescription') as HTMLParagraphElement;
+
 // URL de la API de perros
 const API_URL = 'https://dog.ceo/api/breeds/list/all';
 
 // Estado de la aplicación
 let allBreeds: BreedInfo[] = [];
+let breedImagesCache: Map<string, string> = new Map();
 
 /**
  * ## Función principal usando Async/Await para obtener y mostrar los perros
@@ -234,6 +249,9 @@ const displayBreeds = async (breeds: BreedInfo[]): Promise<void> => {
     // Por cada raza, obtenemos una imagen aleatoria
     const imageUrl = await getBreedImage(breed.name);
     
+    // Guardamos la imagen en caché
+    breedImagesCache.set(breed.name, imageUrl);
+    
     // Creamos la tarjeta para el perro
     const card = document.createElement('div');
     card.className = 'dog-card';
@@ -242,6 +260,10 @@ const displayBreeds = async (breeds: BreedInfo[]): Promise<void> => {
       <img src="${imageUrl}" alt="${breed.name}" loading="lazy">
       <h3>${breed.name}</h3>
     `;
+    
+    // Agregar event listener para abrir el modal
+    card.addEventListener('click', () => openBreedModal(breed.name, imageUrl));
+    
     galleryDiv.appendChild(card);
   }
 };
@@ -294,7 +316,43 @@ const log = (message: string): void => {
   console.log(message);
 };
 
+/**
+ * Abre el modal con información detallada de una raza
+ * @param breedName - Nombre de la raza
+ * @param imageUrl - URL de la imagen de la raza
+ */
+const openBreedModal = (breedName: string, imageUrl: string): void => {
+  // Obtener información detallada de la raza
+  const details: BreedDetails = getBreedDetails(breedName);
+  
+  // Llenar el modal con la información
+  modalImage.src = imageUrl;
+  modalImage.alt = details.name;
+  modalTitle.textContent = details.name;
+  modalSize.textContent = details.size;
+  modalOrigin.textContent = details.origin;
+  modalLifespan.textContent = details.lifespan;
+  modalTemperament.textContent = details.temperament;
+  modalDescription.textContent = details.description;
+  
+  // Mostrar el modal
+  modal.classList.add('show');
+  document.body.style.overflow = 'hidden'; // Prevenir scroll del body
+  
+  log(`📋 Mostrando información de: ${details.name}`);
+};
+
+/**
+ * Cierra el modal
+ */
+const closeBreedModal = (): void => {
+  modal.classList.remove('show');
+  document.body.style.overflow = 'auto'; // Restaurar scroll del body
+  log('❌ Modal cerrado');
+};
+
 // ## Event Listeners
+
 // Agregar listeners a los botones de filtro
 filterButtons.forEach(button => {
   button.addEventListener('click', () => {
@@ -303,8 +361,26 @@ filterButtons.forEach(button => {
   });
 });
 
+// Cerrar modal al hacer clic en la X
+modalClose.addEventListener('click', closeBreedModal);
+
+// Cerrar modal al hacer clic fuera del contenido
+modal.addEventListener('click', (event) => {
+  if (event.target === modal) {
+    closeBreedModal();
+  }
+});
+
+// Cerrar modal con la tecla Escape
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && modal.classList.contains('show')) {
+    closeBreedModal();
+  }
+});
+
 // Log inicial para confirmar que el script se cargó correctamente
 console.log('🐶 Aplicación de Razas de Perros cargada correctamente!');
+console.log('✨ Sistema de información detallada activado');
 
 // Cargar todas las razas al inicio
 fetchAndDisplayBreeds();

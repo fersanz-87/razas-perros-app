@@ -34,6 +34,54 @@
             <p>Desarrollado por <strong>Fer Sanz Development</strong></p>
         </footer>
     </div>
+
+    <!-- Modal de información de raza -->
+    <div id="breedModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <div class="modal-header">
+                <img id="modalImage" src="" alt="">
+                <h2 id="modalTitle"></h2>
+            </div>
+            <div class="modal-body">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-icon">📏</span>
+                        <div class="info-details">
+                            <strong>Tamaño</strong>
+                            <p id="modalSize"></p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">🌍</span>
+                        <div class="info-details">
+                            <strong>Origen</strong>
+                            <p id="modalOrigin"></p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">⏳</span>
+                        <div class="info-details">
+                            <strong>Esperanza de Vida</strong>
+                            <p id="modalLifespan"></p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">💝</span>
+                        <div class="info-details">
+                            <strong>Temperamento</strong>
+                            <p id="modalTemperament"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="description-section">
+                    <h3>Descripción</h3>
+                    <p id="modalDescription"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script type="module" src="/src/main.ts"></script>
 </body>
 </html>

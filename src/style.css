@@ -169,6 +169,193 @@ h1 {
     font-weight: 700;
 }
 
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.3s ease;
+}
+
+.modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: white;
+    margin: 2rem;
+    padding: 0;
+    border-radius: 20px;
+    max-width: 700px;
+    width: 90%;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s ease;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    color: white;
+    font-size: 35px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 1001;
+    transition: transform 0.2s;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.modal-close:hover,
+.modal-close:focus {
+    transform: scale(1.2) rotate(90deg);
+}
+
+.modal-header {
+    position: relative;
+    text-align: center;
+    overflow: hidden;
+    border-radius: 20px 20px 0 0;
+}
+
+.modal-header img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    display: block;
+}
+
+.modal-header h2 {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 1.5rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    color: white;
+    font-size: 2rem;
+    text-transform: capitalize;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+    transition: transform 0.2s;
+}
+
+.info-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.info-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.info-details {
+    flex: 1;
+}
+
+.info-details strong {
+    display: block;
+    color: #5a9e3b;
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-details p {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+.description-section {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+    border-radius: 12px;
+    margin-top: 1rem;
+}
+
+.description-section h3 {
+    color: #5a9e3b;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.description-section p {
+    margin: 0;
+    color: #495057;
+    line-height: 1.8;
+    font-size: 1rem;
+}
+
+/* Cursor pointer en tarjetas */
+.dog-card {
+    cursor: pointer;
+}
+
+.dog-card::after {
+    content: '👁️ Ver detalles';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(90, 158, 59, 0.95);
+    color: white;
+    padding: 0.8rem;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.dog-card:hover::after {
+    transform: translateY(0);
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     h1 {
@@ -187,5 +374,34 @@ h1 {
     .gallery {
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         gap: 15px;
+    }
+    
+    .modal-content {
+        margin: 1rem;
+        width: 95%;
+    }
+    
+    .modal-header img {
+        height: 200px;
+    }
+    
+    .modal-header h2 {
+        font-size: 1.5rem;
+        padding: 1rem;
+    }
+    
+    .modal-body {
+        padding: 1.5rem;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .modal-close {
+        font-size: 30px;
+        right: 15px;
+        top: 10px;
     }
 }
