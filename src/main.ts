@@ -48,36 +48,39 @@ const breedSizeMap: Record<string, DogSize> = {
   'chihuahua': 'small',
   'pomeranian': 'small',
   'pug': 'small',
-  'shiba': 'small',
-  'terrier': 'small',
   'dachshund': 'small',
   'maltese': 'small',
   'papillon': 'small',
   'pekinese': 'small',
   'poodle-toy': 'small',
   'schipperke': 'small',
+  'yorkshire': 'small',
   
   // Mediano (10-25kg)
   'beagle': 'medium',
   'bulldog': 'medium',
   'corgi': 'medium',
   'basenji': 'medium',
+  'chow': 'medium',
   'cocker': 'medium',
   'spaniel': 'medium',
   'finnish': 'medium',
   'keeshond': 'medium',
   'kelpie': 'medium',
   'pitbull': 'medium',
+  'poodle': 'medium',
   'poodle-miniature': 'medium',
   'poodle-medium': 'medium',
   'schnauzer': 'medium',
   'sharpei': 'medium',
   'sheepdog': 'medium',
+  'shiba': 'medium',
   'springer': 'medium',
   'whippet': 'medium',
   
   // Grande (más de 25kg)
   'african': 'large',
+  'airedale': 'large',
   'akita': 'large',
   'appenzeller': 'large',
   'australian': 'large',
@@ -91,10 +94,12 @@ const breedSizeMap: Record<string, DogSize> = {
   'briard': 'large',
   'buhund': 'large',
   'bullmastiff': 'large',
+  'bullterrier': 'large',
   'cattledog': 'large',
   'clumber': 'large',
   'collie': 'large',
   'coonhound': 'large',
+  'dalmatian': 'large',
   'deerhound': 'large',
   'dhole': 'large',
   'dingo': 'large',
@@ -102,10 +107,13 @@ const breedSizeMap: Record<string, DogSize> = {
   'elkhound': 'large',
   'entlebucher': 'large',
   'eskimo': 'large',
+  'german': 'large',
   'germanshepherd': 'large',
+  'greyhound': 'large',
   'groenendael': 'large',
   'hound': 'large',
   'husky': 'large',
+  'labrador': 'large',
   'retriever': 'large',
   'leonberg': 'large',
   'malamute': 'large',
@@ -168,6 +176,8 @@ const getSizeLabel = (size: DogSize): string => {
 // Obtenemos las referencias a nuestros elementos del HTML
 const galleryDiv = document.getElementById('gallery') as HTMLDivElement;
 const filterButtons = document.querySelectorAll('.filter-btn') as NodeListOf<HTMLButtonElement>;
+const searchInput = document.getElementById('searchInput') as HTMLInputElement;
+const clearSearchBtn = document.getElementById('clearSearch') as HTMLButtonElement;
 
 // Referencias del modal
 const modal = document.getElementById('breedModal') as HTMLDivElement;
@@ -186,6 +196,8 @@ const API_URL = 'https://dog.ceo/api/breeds/list/all';
 // Estado de la aplicación
 let allBreeds: BreedInfo[] = [];
 let breedImagesCache: Map<string, string> = new Map();
+let currentSizeFilter: DogSize = 'all';
+let currentSearchTerm: string = '';
 
 /**
  * ## Función principal usando Async/Await para obtener y mostrar los perros
@@ -236,11 +248,23 @@ const displayBreeds = async (breeds: BreedInfo[]): Promise<void> => {
   // Limpiar la galería
   galleryDiv.innerHTML = '';
   
-  log(`<strong>Mostrando ${breeds.length} razas...</strong>`);
+  // Crear mensaje descriptivo
+  let filterMsg = '';
+  if (currentSearchTerm) {
+    filterMsg += ` con búsqueda: "${currentSearchTerm}"`;
+  }
+  if (currentSizeFilter !== 'all') {
+    filterMsg += ` (Tamaño: ${getSizeLabel(currentSizeFilter)})`;
+  }
+  
+  log(`<strong>Mostrando ${breeds.length} razas${filterMsg}</strong>`);
   
   // Mostrar mensaje si no hay resultados
   if (breeds.length === 0) {
-    galleryDiv.innerHTML = '<p style="grid-column: 1 / -1; color: #6c757d;">No se encontraron razas con este filtro.</p>';
+    const noResultsMsg = currentSearchTerm 
+      ? `No se encontraron razas que coincidan con "${currentSearchTerm}"${currentSizeFilter !== 'all' ? ` y tamaño ${getSizeLabel(currentSizeFilter)}` : ''}.`
+      : 'No se encontraron razas con este filtro.';
+    galleryDiv.innerHTML = `<p style="grid-column: 1 / -1; color: #6c757d;">${noResultsMsg}</p>`;
     return;
   }
   
@@ -269,10 +293,35 @@ const displayBreeds = async (breeds: BreedInfo[]): Promise<void> => {
 };
 
 /**
+ * Aplica los filtros combinados de búsqueda y tamaño
+ * @returns Promise<void>
+ */
+const applyFilters = async (): Promise<void> => {
+  let filteredBreeds = allBreeds;
+  
+  // Filtrar por tamaño
+  if (currentSizeFilter !== 'all') {
+    filteredBreeds = filteredBreeds.filter(breed => breed.size === currentSizeFilter);
+  }
+  
+  // Filtrar por búsqueda
+  if (currentSearchTerm.trim() !== '') {
+    const searchLower = currentSearchTerm.toLowerCase().trim();
+    filteredBreeds = filteredBreeds.filter(breed => 
+      breed.name.toLowerCase().includes(searchLower)
+    );
+  }
+  
+  await displayBreeds(filteredBreeds);
+};
+
+/**
  * Filtra las razas por tamaño
  * @param size - Tamaño a filtrar
  */
 const filterBySize = async (size: DogSize): Promise<void> => {
+  currentSizeFilter = size;
+  
   // Actualizar clases activas en botones
   filterButtons.forEach(btn => {
     if (btn.dataset.size === size) {
@@ -282,12 +331,34 @@ const filterBySize = async (size: DogSize): Promise<void> => {
     }
   });
   
-  // Filtrar y mostrar razas
-  const filteredBreeds = size === 'all' 
-    ? allBreeds 
-    : allBreeds.filter(breed => breed.size === size);
-    
-  await displayBreeds(filteredBreeds);
+  await applyFilters();
+};
+
+/**
+ * Maneja el evento de búsqueda por nombre
+ */
+const handleSearch = async (): Promise<void> => {
+  currentSearchTerm = searchInput.value;
+  
+  // Mostrar/ocultar botón de limpiar
+  if (currentSearchTerm.trim() !== '') {
+    clearSearchBtn.classList.add('show');
+  } else {
+    clearSearchBtn.classList.remove('show');
+  }
+  
+  await applyFilters();
+};
+
+/**
+ * Limpia el campo de búsqueda
+ */
+const clearSearch = async (): Promise<void> => {
+  searchInput.value = '';
+  currentSearchTerm = '';
+  clearSearchBtn.classList.remove('show');
+  searchInput.focus();
+  await applyFilters();
 };
 
 /**
@@ -361,6 +432,26 @@ filterButtons.forEach(button => {
   });
 });
 
+// Event listener para el campo de búsqueda con debounce
+let searchTimeout: number;
+searchInput.addEventListener('input', () => {
+  clearTimeout(searchTimeout);
+  searchTimeout = window.setTimeout(() => {
+    handleSearch();
+  }, 300); // Esperar 300ms después de que el usuario deje de escribir
+});
+
+// Event listener para limpiar búsqueda
+clearSearchBtn.addEventListener('click', clearSearch);
+
+// Event listener para buscar al presionar Enter
+searchInput.addEventListener('keypress', (event) => {
+  if (event.key === 'Enter') {
+    clearTimeout(searchTimeout);
+    handleSearch();
+  }
+});
+
 // Cerrar modal al hacer clic en la X
 modalClose.addEventListener('click', closeBreedModal);
 
@@ -381,6 +472,7 @@ document.addEventListener('keydown', (event) => {
 // Log inicial para confirmar que el script se cargó correctamente
 console.log('🐶 Aplicación de Razas de Perros cargada correctamente!');
 console.log('✨ Sistema de información detallada activado');
+console.log('🔍 Búsqueda por nombre de raza habilitada');
 
 // Cargar todas las razas al inicio
 fetchAndDisplayBreeds();

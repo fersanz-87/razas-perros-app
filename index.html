@@ -11,6 +11,24 @@
         <h1>Galería de Razas de Perros</h1>
         
         <div class="filter-section">
+            <div class="search-container">
+                <h3>🔍 Buscar por nombre:</h3>
+                <div class="search-input-wrapper">
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        class="search-input" 
+                        placeholder="Ej: golden, labrador, husky..."
+                        autocomplete="off"
+                    >
+                    <button id="clearSearch" class="clear-btn" aria-label="Limpiar búsqueda">
+                        ✕
+                    </button>
+                </div>
+            </div>
+            
+            <div class="divider"></div>
+            
             <h3>Filtrar por tamaño:</h3>
             <div class="filter-buttons">
                 <button class="filter-btn active" data-size="all">
