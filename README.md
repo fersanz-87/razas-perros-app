@@ -8,14 +8,19 @@ Esta aplicación demuestra el uso de **TypeScript** con JavaScript asíncrono (A
 
 ## ✨ Características
 
-- 🎨 Interfaz limpia y moderna
+- 🎨 Interfaz limpia y moderna con diseño profesional
+- 🔍 **Búsqueda en tiempo real** por nombre de raza con debounce
+- 🐕 **Filtros por tamaño** (Pequeño, Mediano, Grande)
+- ℹ️ **Modal de información detallada** para cada raza
 - 🔄 Carga asíncrona de datos usando Fetch API
 - 📱 Diseño responsive con CSS Grid
-- 🎭 Animaciones suaves en las tarjetas
+- 🎭 Animaciones suaves y transiciones elegantes
 - ⚡ Manejo robusto de errores con TypeScript
-- 🐕 Muestra 12 razas de perros aleatorias con imágenes
+- 🐕 Muestra todas las razas disponibles con imágenes reales
 - 🛡️ Type-safety completo con TypeScript
 - ⚡️ Hot Module Replacement (HMR) con Vite
+- 📊 Sistema de clasificación de razas por tamaño
+- 💾 Caché de imágenes para mejor rendimiento
 
 ## 🛠️ Tecnologías
 
@@ -37,7 +42,7 @@ Esta aplicación demuestra el uso de **TypeScript** con JavaScript asíncrono (A
 
 1. **Clona el repositorio:**
    ```bash
-   git clone <tu-repositorio-url>
+   git clone https://github.com/fersanz-87/razas-perros-app.git
    cd razas-perros-app
    ```
 
@@ -73,8 +78,10 @@ pnpm typecheck
    La aplicación se abrirá automáticamente en `http://localhost:3000`
 
 2. **Usa la aplicación:**
-   - Haz clic en el botón "Cargar Razas"
-   - Observa cómo se cargan las tarjetas con las razas de perros
+   - La aplicación carga automáticamente todas las razas disponibles
+   - Usa el campo de búsqueda para filtrar por nombre de raza
+   - Filtra por tamaño usando los botones (Pequeño, Mediano, Grande)
+   - Haz clic en cualquier tarjeta para ver información detallada de la raza
    - Pasa el mouse sobre las tarjetas para ver las animaciones
    - Abre la consola del navegador para ver los logs informativos
 
@@ -107,30 +114,41 @@ Este proyecto es una excelente referencia para aprender:
 razas-perros-app/
 ├── src/
 │   ├── main.ts          # Lógica principal con TypeScript
+│   ├── breedData.ts     # Base de datos de información de razas
 │   └── style.css        # Estilos de la aplicación
+├── public/
+│   └── vite.svg         # Assets públicos
 ├── index.html           # Estructura HTML
 ├── tsconfig.json        # Configuración de TypeScript
 ├── vite.config.ts       # Configuración de Vite
 ├── package.json         # Dependencias y scripts
 ├── .gitignore          # Archivos ignorados por Git
+├── .nvmrc              # Versión de Node.js
 ├── pnpm-lock.yaml      # Lock file de pnpm
 └── README.md           # Este archivo
 ```
 
-## 🔧 Funcionalidades Futuras
+## 🔧 Funcionalidades Implementadas y Futuras
 
-Ideas para mejorar el proyecto:
+### ✅ Implementado
+- [x] Filtro de búsqueda por nombre de raza con debounce
+- [x] Filtros por tamaño (Pequeño, Mediano, Grande)
+- [x] Información detallada de cada raza al hacer clic (modal)
+- [x] Sistema de clasificación de razas por tamaño
+- [x] Caché de imágenes para mejor rendimiento
+- [x] Animaciones suaves y transiciones
 
-- [ ] Filtro de búsqueda por nombre de raza
-- [ ] Botón para cargar más razas
-- [ ] Información detallada de cada raza al hacer clic
+### 🚀 Ideas para mejorar el proyecto:
 - [ ] Favoritos guardados en localStorage
 - [ ] Modo oscuro
 - [ ] Animación de skeleton loading
-- [ ] Paginación
+- [ ] Paginación o scroll infinito
+- [ ] Compartir raza en redes sociales
 - [ ] Tests unitarios con Vitest
 - [ ] Tests E2E con Playwright
 - [ ] Internacionalización (i18n)
+- [ ] PWA (Progressive Web App)
+- [ ] Filtros adicionales (temperamento, origen)
 
 ## 🧪 Testing
 
