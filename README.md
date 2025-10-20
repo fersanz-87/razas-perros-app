@@ -2,6 +2,8 @@
 
 Una aplicación web interactiva que muestra diferentes razas de perros utilizando la API de [Dog CEO](https://dog.ceo/dog-api/). Construida con **TypeScript**, **Vite** y usando conceptos modernos de JavaScript asíncrono.
 
+🌐 **[Ver Demo en Vivo](https://razas-perros-qdv6pr14q-ready-sets-projects.vercel.app)**
+
 ## 📋 Descripción
 
 Esta aplicación demuestra el uso de **TypeScript** con JavaScript asíncrono (Async/Await) para obtener datos de una API externa y mostrarlos dinámicamente en una galería interactiva. Es un proyecto educativo que ejemplifica conceptos clave de JavaScript y TypeScript modernos.
@@ -179,6 +181,29 @@ El build de producción incluye:
 - ✅ Code splitting
 - ✅ Optimización de assets
 - ✅ Source maps (opcional)
+
+## 🚀 Deployment en Vercel
+
+Esta aplicación está desplegada en Vercel. Para desplegar tu propia versión:
+
+### Opción 1: Deploy desde Git (Recomendado)
+1. Conecta tu repositorio de GitHub con Vercel
+2. Vercel detectará automáticamente la configuración de Vite
+3. Cada push a `main` desplegará automáticamente
+
+### Opción 2: Deploy con Vercel CLI
+```bash
+# Instalar Vercel CLI (si no la tienes)
+npm i -g vercel
+
+# Login en Vercel
+vercel login
+
+# Deploy a producción
+vercel --prod
+```
+
+**🌐 URL de Producción:** https://razas-perros-qdv6pr14q-ready-sets-projects.vercel.app
 
 ## 🤝 Contribuciones
 
