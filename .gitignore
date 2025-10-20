@@ -24,7 +24,7 @@
 .classpath
 .settings/
 
-# Node.js (si decides agregar dependencias en el futuro)
+# Node.js
 node_modules/
 npm-debug.log*
 yarn-debug.log*
@@ -32,6 +32,17 @@ yarn-error.log*
 pnpm-debug.log*
 .npm/
 .yarn/
+.pnpm-store/
+
+# Vite
+dist/
+dist-ssr/
+*.local
+
+# TypeScript
+*.tsbuildinfo
+*.js.map
+*.d.ts.map
 
 # Environment variables
 .env

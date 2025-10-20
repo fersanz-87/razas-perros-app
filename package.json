@@ -1,0 +1,26 @@
+{
+  "name": "razas-perros-app",
+  "version": "1.0.0",
+  "description": "Una aplicación web interactiva que muestra diferentes razas de perros usando TypeScript y la API de Dog CEO",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "typescript",
+    "vite",
+    "dog-api",
+    "async-await",
+    "fetch-api"
+  ],
+  "author": "Fer Sanz",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^24.9.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.11"
+  }
+}
