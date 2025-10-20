@@ -9,9 +9,30 @@
 <body>
     <div class="container">
         <h1>Galería de Razas de Perros</h1>
-        <p>Aplicación con TypeScript y JavaScript asíncrono (Async/Await) para cargar razas de perros desde una API.</p>
-        <button id="loadButton">Cargar Razas</button>
+        
+        <div class="filter-section">
+            <h3>Filtrar por tamaño:</h3>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-size="all">
+                    🐕 Todas
+                </button>
+                <button class="filter-btn" data-size="small">
+                    🐩 Pequeño
+                </button>
+                <button class="filter-btn" data-size="medium">
+                    🦮 Mediano
+                </button>
+                <button class="filter-btn" data-size="large">
+                    🐕‍🦺 Grande
+                </button>
+            </div>
+        </div>
+
         <div id="gallery" class="gallery"></div>
+
+        <footer class="footer">
+            <p>Desarrollado por <strong>Fer Sanz Development</strong></p>
+        </footer>
     </div>
     <script type="module" src="/src/main.ts"></script>
 </body>

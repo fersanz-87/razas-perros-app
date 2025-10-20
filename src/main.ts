@@ -25,12 +25,152 @@ interface BreedImageApiResponse {
   status: string;
 }
 
+/**
+ * Tipo de tamaño de perro
+ */
+type DogSize = 'small' | 'medium' | 'large' | 'all';
+
+/**
+ * Información de una raza con su tamaño
+ */
+interface BreedInfo {
+  name: string;
+  size: DogSize;
+}
+
+// Clasificación de razas por tamaño (basado en estándares comunes)
+const breedSizeMap: Record<string, DogSize> = {
+  // Pequeño (hasta 10kg)
+  'affenpinscher': 'small',
+  'chihuahua': 'small',
+  'pomeranian': 'small',
+  'pug': 'small',
+  'shiba': 'small',
+  'terrier': 'small',
+  'dachshund': 'small',
+  'maltese': 'small',
+  'papillon': 'small',
+  'pekinese': 'small',
+  'poodle-toy': 'small',
+  'schipperke': 'small',
+  
+  // Mediano (10-25kg)
+  'beagle': 'medium',
+  'bulldog': 'medium',
+  'corgi': 'medium',
+  'basenji': 'medium',
+  'cocker': 'medium',
+  'spaniel': 'medium',
+  'finnish': 'medium',
+  'keeshond': 'medium',
+  'kelpie': 'medium',
+  'pitbull': 'medium',
+  'poodle-miniature': 'medium',
+  'poodle-medium': 'medium',
+  'schnauzer': 'medium',
+  'sharpei': 'medium',
+  'sheepdog': 'medium',
+  'springer': 'medium',
+  'whippet': 'medium',
+  
+  // Grande (más de 25kg)
+  'african': 'large',
+  'akita': 'large',
+  'appenzeller': 'large',
+  'australian': 'large',
+  'bakharwal': 'large',
+  'bernese': 'large',
+  'bluetick': 'large',
+  'borzoi': 'large',
+  'bouvier': 'large',
+  'boxer': 'large',
+  'brabancon': 'large',
+  'briard': 'large',
+  'buhund': 'large',
+  'bullmastiff': 'large',
+  'cattledog': 'large',
+  'clumber': 'large',
+  'collie': 'large',
+  'coonhound': 'large',
+  'deerhound': 'large',
+  'dhole': 'large',
+  'dingo': 'large',
+  'doberman': 'large',
+  'elkhound': 'large',
+  'entlebucher': 'large',
+  'eskimo': 'large',
+  'germanshepherd': 'large',
+  'groenendael': 'large',
+  'hound': 'large',
+  'husky': 'large',
+  'retriever': 'large',
+  'leonberg': 'large',
+  'malamute': 'large',
+  'malinois': 'large',
+  'mastiff': 'large',
+  'mountain': 'large',
+  'newfoundland': 'large',
+  'otterhound': 'large',
+  'ovcharka': 'large',
+  'pointer': 'large',
+  'poodle-standard': 'large',
+  'pyrenees': 'large',
+  'redbone': 'large',
+  'ridgeback': 'large',
+  'rottweiler': 'large',
+  'saluki': 'large',
+  'samoyed': 'large',
+  'setter': 'large',
+  'shepherd': 'large',
+  'stbernard': 'large',
+  'vizsla': 'large',
+  'waterdog': 'large',
+  'weimaraner': 'large',
+  'wolfhound': 'large',
+};
+
+/**
+ * Determina el tamaño de una raza
+ */
+const getBreedSize = (breedName: string): DogSize => {
+  // Buscar coincidencia exacta
+  if (breedSizeMap[breedName]) {
+    return breedSizeMap[breedName];
+  }
+  
+  // Buscar coincidencia parcial
+  for (const [key, size] of Object.entries(breedSizeMap)) {
+    if (breedName.includes(key) || key.includes(breedName)) {
+      return size;
+    }
+  }
+  
+  // Por defecto, asignar mediano
+  return 'medium';
+};
+
+/**
+ * Obtiene el emoji y texto del tamaño
+ */
+const getSizeLabel = (size: DogSize): string => {
+  const labels: Record<DogSize, string> = {
+    'small': '🐩 Pequeño',
+    'medium': '🦮 Mediano',
+    'large': '🐕‍🦺 Grande',
+    'all': '🐕 Todas'
+  };
+  return labels[size];
+};
+
 // Obtenemos las referencias a nuestros elementos del HTML
-const loadButton = document.getElementById('loadButton') as HTMLButtonElement;
 const galleryDiv = document.getElementById('gallery') as HTMLDivElement;
+const filterButtons = document.querySelectorAll('.filter-btn') as NodeListOf<HTMLButtonElement>;
 
 // URL de la API de perros
 const API_URL = 'https://dog.ceo/api/breeds/list/all';
+
+// Estado de la aplicación
+let allBreeds: BreedInfo[] = [];
 
 /**
  * ## Función principal usando Async/Await para obtener y mostrar los perros
@@ -41,68 +181,95 @@ const fetchAndDisplayBreeds = async (): Promise<void> => {
   galleryDiv.innerHTML = '<div class="loader">Cargando perritos... 🐾</div>';
 
   // ## Bloque try/catch/finally para manejar Promesas
-  // Usamos 'try' para el código que podría fallar (ej. la llamada a la red)
   try {
     // ## Promesa y Async/Await
-    // 'await' pausa la ejecución hasta que la promesa de fetch() se resuelva
     const response = await fetch(API_URL);
 
     // ## Condicional
-    // Verificamos si la respuesta de la red fue exitosa
     if (!response.ok) {
       throw new Error(`Error de red: ${response.status}`);
     }
 
     // TypeScript ahora sabe que data tiene la estructura BreedsApiResponse
     const data: BreedsApiResponse = await response.json();
-    const breeds: string[] = Object.keys(data.message); // Obtenemos un array con los nombres de las razas
+    const breedNames: string[] = Object.keys(data.message);
 
-    // Limpiamos el mensaje de carga
-    galleryDiv.innerHTML = '';
+    // Crear array de BreedInfo con tamaños
+    allBreeds = breedNames.map(name => ({
+      name,
+      size: getBreedSize(name)
+    }));
 
-    // ## Función y Loop
-    // Tomamos una muestra de 12 razas y las procesamos
-    await displayBreeds(breeds.slice(0, 12));
+    // Mostrar todas las razas inicialmente
+    await displayBreeds(allBreeds);
 
   } catch (error) {
-    // 'catch' se ejecuta si algo en el bloque 'try' falla
     const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
     galleryDiv.innerHTML = `<div class="error">Lo sentimos, no se pudieron cargar las razas. Error: ${errorMessage}</div>`;
     console.error("Hubo un problema con la operación fetch:", error);
   } finally {
-    // 'finally' se ejecuta siempre, haya éxito o error
     console.log("Intento de carga de razas finalizado.");
   }
 };
 
 /**
  * ## Función para mostrar las razas en el DOM
- * @param breeds - Array de nombres de razas a mostrar
+ * @param breeds - Array de información de razas a mostrar
  * @returns Promise<void>
  */
-const displayBreeds = async (breeds: string[]): Promise<void> => {
-  log('<strong>Iniciando muestra de razas...</strong>');
+const displayBreeds = async (breeds: BreedInfo[]): Promise<void> => {
+  // Limpiar la galería
+  galleryDiv.innerHTML = '';
+  
+  log(`<strong>Mostrando ${breeds.length} razas...</strong>`);
+  
+  // Mostrar mensaje si no hay resultados
+  if (breeds.length === 0) {
+    galleryDiv.innerHTML = '<p style="grid-column: 1 / -1; color: #6c757d;">No se encontraron razas con este filtro.</p>';
+    return;
+  }
   
   // ## Loop para iterar sobre cada raza
-  // Usamos for...of para recorrer el array de razas
   for (const breed of breeds) {
     // Por cada raza, obtenemos una imagen aleatoria
-    const imageUrl = await getBreedImage(breed);
+    const imageUrl = await getBreedImage(breed.name);
     
     // Creamos la tarjeta para el perro
     const card = document.createElement('div');
     card.className = 'dog-card';
     card.innerHTML = `
-      <img src="${imageUrl}" alt="${breed}">
-      <h3>${breed}</h3>
+      <span class="size-badge">${getSizeLabel(breed.size)}</span>
+      <img src="${imageUrl}" alt="${breed.name}" loading="lazy">
+      <h3>${breed.name}</h3>
     `;
     galleryDiv.appendChild(card);
   }
 };
 
 /**
- * ## Función auxiliar con Callback (implícito en .then)
- * Esta función también es asíncrona y obtiene la imagen de una raza específica
+ * Filtra las razas por tamaño
+ * @param size - Tamaño a filtrar
+ */
+const filterBySize = (size: DogSize): void => {
+  // Actualizar clases activas en botones
+  filterButtons.forEach(btn => {
+    if (btn.dataset.size === size) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+  
+  // Filtrar y mostrar razas
+  const filteredBreeds = size === 'all' 
+    ? allBreeds 
+    : allBreeds.filter(breed => breed.size === size);
+    
+  displayBreeds(filteredBreeds);
+};
+
+/**
+ * ## Función auxiliar para obtener imagen de una raza
  * @param breed - Nombre de la raza
  * @returns Promise<string> - URL de la imagen
  */
@@ -115,7 +282,7 @@ const getBreedImage = async (breed: string): Promise<string> => {
     return data.message;
   } catch (error) {
     console.error(`Error obteniendo imagen para ${breed}:`, error);
-    return 'https://via.placeholder.com/250'; // Una imagen por defecto si falla
+    return 'https://via.placeholder.com/250?text=Imagen+no+disponible';
   }
 };
 
@@ -127,12 +294,17 @@ const log = (message: string): void => {
   console.log(message);
 };
 
-// ## Event Loop
-// El 'addEventListener' es un ejemplo perfecto del Event Loop en acción
-// El navegador espera a que el usuario haga clic (un evento) sin bloquear nada
-// Cuando ocurre el clic, el 'callback' (nuestra función asíncrona) se añade a la cola de tareas y se ejecuta
-loadButton.addEventListener('click', fetchAndDisplayBreeds);
+// ## Event Listeners
+// Agregar listeners a los botones de filtro
+filterButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    const size = button.dataset.size as DogSize;
+    filterBySize(size);
+  });
+});
 
 // Log inicial para confirmar que el script se cargó correctamente
 console.log('🐶 Aplicación de Razas de Perros cargada correctamente!');
 
+// Cargar todas las razas al inicio
+fetchAndDisplayBreeds();
