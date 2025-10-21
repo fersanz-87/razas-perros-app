@@ -176,8 +176,12 @@ const getSizeLabel = (size: DogSize): string => {
 // Obtenemos las referencias a nuestros elementos del HTML
 const galleryDiv = document.getElementById('gallery') as HTMLDivElement;
 const filterButtons = document.querySelectorAll('.filter-btn') as NodeListOf<HTMLButtonElement>;
+
 const searchInput = document.getElementById('searchInput') as HTMLInputElement;
 const clearSearchBtn = document.getElementById('clearSearch') as HTMLButtonElement;
+
+// console.log(getSizeLabel);
+
 
 // Referencias del modal
 const modal = document.getElementById('breedModal') as HTMLDivElement;
@@ -303,6 +307,8 @@ const applyFilters = async (): Promise<void> => {
   if (currentSizeFilter !== 'all') {
     filteredBreeds = filteredBreeds.filter(breed => breed.size === currentSizeFilter);
   }
+
+
   
   // Filtrar por búsqueda
   if (currentSearchTerm.trim() !== '') {
@@ -427,6 +433,7 @@ const closeBreedModal = (): void => {
 // Agregar listeners a los botones de filtro
 filterButtons.forEach(button => {
   button.addEventListener('click', () => {
+    console.log('Botón clickeado:', button.dataset.size);
     const size = button.dataset.size as DogSize;
     filterBySize(size);
   });
@@ -476,3 +483,17 @@ console.log('🔍 Búsqueda por nombre de raza habilitada');
 
 // Cargar todas las razas al inicio
 fetchAndDisplayBreeds();
+
+/* Como optimizar esta porcion de codigo?
+const getBreeds = () => {
+  fetch('https://dog.ceo/api/breeds/list/all')
+    .then(res => res.json())
+    .then(data => {
+      let breeds = Object.keys(data.message)
+      for(let i=0; i<breeds.length; i++) {
+        document.getElementById('gallery').innerHTML +=
+          `<div>${breeds[i]}</div>`
+      }
+    })
+}
+    */
